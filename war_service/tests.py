@@ -1,6 +1,6 @@
 import json
 import requests
-from django.test import TestCase
+import unittest
 
 player1 = json.dumps({"name": "Anna"})
 player2 = json.dumps({"name": "Bill"})
@@ -11,7 +11,7 @@ play1 = json.dumps({"id": 1})
 play2 = json.dumps({"id": 2})
 
 
-class TestWarAPI(TestCase):
+class TestWarAPI(unittest.TestCase):
     def Test_create_player(self):
         response = requests.post("http://localhost:8000/createplayer/", player1)
         self.assertEqual(response.status_code, 200)
@@ -25,7 +25,7 @@ class TestWarAPI(TestCase):
 
     def Test_duplicate_player(self):
         response = requests.post("http://localhost:8000/createplayer/", player1)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
         response_json = json.loads(response.content.decode("utf-8"))
         self.assertEqual(response_json, {"message": "Player Anna already exists"})
 
@@ -75,12 +75,12 @@ class TestWarAPI(TestCase):
         )
 
     def Test_take_turn(self):
-        response = requests.post("http://localhost:8000/playgame/", play2)
+        response = requests.post("http://localhost:8000/taketurn/", play1)
         self.assertEqual(response.status_code, 200)
         response_json = json.loads(response.content.decode("utf-8"))
-        self.assertIn(
-            response_json,
-            [
+        self.assertEqual(
+            set(response_json.keys()),
+            {
                 "finished",
                 "player1",
                 "player2",
@@ -88,14 +88,17 @@ class TestWarAPI(TestCase):
                 "player2_card",
                 "pile_size",
                 "message",
-            ],
+            },
         )
 
     def Test_play_game(self):
         response = requests.post("http://localhost:8000/playgame/", play1)
         self.assertEqual(response.status_code, 200)
         response_json = json.loads(response.content.decode("utf-8"))
-        self.assertIn(response_json, ["Anna", "Bill"])
+        self.assertEqual(
+            response_json.keys(),
+            {"finished", "player1", "player2", "player1_score", "player2_score"},
+        )
 
     def Test_take_turn_fail(self):
         response = requests.post("http://localhost:8000/taketurn/", play1)
@@ -147,3 +150,7 @@ class TestWarAPI(TestCase):
         self.Test_play_game_fail()
         self.Test_get_games_success2()
         self.Test_get_wins_success2()
+
+
+if __name__ == "__main__":
+    unittest.main()

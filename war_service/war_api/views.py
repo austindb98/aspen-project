@@ -28,11 +28,19 @@ def create_player(request):
         )
 
 
+def get_all_wins(request):
+    players = Player.objects.all()
+    win_dict = {}
+    for p in players:
+        win_dict[p.name] = p.wins
+    return JsonResponse(win_dict, status=200)
+
+
 def get_wins(request):
     data = json.loads(request.body.decode("utf-8"))
-    print(data)
+    # print(data)
     p = data.get("name")
-    print(p)
+    # print(p)
     try:
         wins = Player.objects.get(name=p).wins
         return JsonResponse({"wins": wins}, status=200)
@@ -76,7 +84,7 @@ def start_game(request):
         "player2": Player.objects.get_or_create(name=p2)[0],
         "game_state": game_state,
     }
-    print(game_entry)
+    # print(game_entry)
 
     db_game = None
     try:

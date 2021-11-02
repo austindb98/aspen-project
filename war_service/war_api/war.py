@@ -73,7 +73,7 @@ class Game:
     def game_step(self):
         if len(self.player2.deck) == 0:
             return {
-                "finished": False,
+                "finished": True,
                 "player1": self.player1.name,
                 "player2": self.player2.name,
                 "player1_score": 1,
@@ -81,7 +81,7 @@ class Game:
             }
         elif len(self.player1.deck) == 0:
             return {
-                "finished": False,
+                "finished": True,
                 "player1": self.player1.name,
                 "player2": self.player2.name,
                 "player1_score": 0,
@@ -89,9 +89,9 @@ class Game:
             }
 
         p1_card = self.player1.deck.pop(0)
-        print(self.player1.name, p1_card)
+        # print(self.player1.name, p1_card)
         p2_card = self.player2.deck.pop(0)
-        print(self.player2.name, p2_card)
+        # print(self.player2.name, p2_card)
         self.winnings.extend([p1_card, p2_card])
         random.shuffle(self.winnings)
 
@@ -101,7 +101,7 @@ class Game:
 
                 if len(self.player2.deck) == 0:
                     return {
-                        "finished": False,
+                        "finished": True,
                         "player1": self.player1.name,
                         "player2": self.player2.name,
                         "player1_score": 1,
@@ -109,7 +109,7 @@ class Game:
                     }
                 elif len(self.player1.deck) == 0:
                     return {
-                        "finished": False,
+                        "finished": True,
                         "player1": self.player1.name,
                         "player2": self.player2.name,
                         "player1_score": 0,
@@ -156,21 +156,21 @@ class Game:
 
     # Returns dict of player name and scores
     def play_game(self):
-        print(len(self.player1.deck))
-        print(len(self.player2.deck))
-        print(len(self.winnings))
+        # print(len(self.player1.deck))
+        # print(len(self.player2.deck))
+        # print(len(self.winnings))
         while len(self.player1.deck) > 0 and len(self.player2.deck) > 0:
             self.game_step()
-            print(
-                self.player1.name + ":",
-                str(len(self.player1.deck)),
-                "\n" + self.player2.name + ":",
-                str(len(self.player2.deck)),
-            )
+            # print(
+            #    self.player1.name + ":",
+            #    str(len(self.player1.deck)),
+            #    "\n" + self.player2.name + ":",
+            #    str(len(self.player2.deck)),
+            # )
         del self.winnings
         if len(self.player2.deck) == 0:
             return {
-                "finished": False,
+                "finished": True,
                 "player1": self.player1.name,
                 "player2": self.player2.name,
                 "player1_score": 1,
@@ -178,7 +178,7 @@ class Game:
             }
         else:
             return {
-                "finished": False,
+                "finished": True,
                 "player1": self.player1.name,
                 "player2": self.player2.name,
                 "player1_score": 0,
