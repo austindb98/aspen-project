@@ -27,7 +27,58 @@ Both ```taketurn``` and ```playgame``` automatically update the wins and games p
 
 Just run ```./tests.sh```. The tests in the file are order-dependant, so I combined them into one test case.
 
-## Other details
-In the spirit of the project, I'd like to add new fields to the players tracking their match history and an endpoint to generate a matplotlib graph of wins over time. While the graphs for war would look roughly the same over a large number of games played, I think it would be interesting to see for any non-predetermined game.
+## JSON Examples
+### Input
+- createplayer, getwins, getgames  
+```{"name": "Anna"}```
+- startgame  
+```{"player1": "Anna", "player2": "Bill"}```
+- taketurn, playgame  
+```{"id": 1}```
 
-Thank you for this opportunity to branch out and learn a technology that I had only barely touched previously. I welcome any criticism or feedback.
+### Output
+- createplayer  
+```{"message": "Success or error message}```
+- getwins  
+```{"wins": 5}```
+- getgames  
+```{"games_played": 8}```
+- getallwins  
+```{"Anna": 2, "Bill": 3, "Charlie": 1}```
+- startgame  
+```{"id": 4}``` or ```{"message": "Error message"}```
+- taketurn - response content differs based on whether the game is complete
+```
+{   
+    "finished": False,
+    "player1": "Anna",
+    "player2": "Charlie",
+    "player1_card": "4 of Hearts",
+    "player2_card": "4 of Clubs",
+    "pile_size": 6,
+    "message": "TIE",
+}
+```
+```
+{   
+    "finished": True,
+    "player1": "Anna",
+    "player2": "Charlie",
+    "player1_score": 1,
+    "player2_score": 0,
+}
+```
+- playgame  
+```
+{   
+    "finished": True,
+    "player1": "Anna",
+    "player2": "Charlie",
+    "player1_score": 1,
+    "player2_score": 0,
+}
+```
+## Other details
+In the spirit of the project, I'd like to add new fields to the players tracking their match history and an endpoint to generate a matplotlib graph of wins over time. While the graphs for war would look roughly the same over a large number of games played, I think it would be interesting to see for any non-predetermined game. I'd also like to explore the use of non-relational databases, as this seems like a good potential use case.
+
+Thank you for this opportunity to branch out and experiment with tools that I had only barely touched previously. I welcome any criticism or feedback.

@@ -10,7 +10,7 @@ class Card:
         return self.rank == o.rank
 
     def __ne__(self, o):
-        return self.rank == o.rank
+        return self.rank != o.rank
 
     def __lt__(self, o):
         return self.rank < o.rank
@@ -55,6 +55,7 @@ class Game:
         player2_deck=None,
         winnings=[],
     ):
+        # Initialize decks if starting new game
         if not player1_deck and not player2_deck:
             deck = []
             for suit in ["Hearts", "Diamonds", "Clubs", "Spades"]:
@@ -71,6 +72,7 @@ class Game:
 
     # Simulates one card coming off the top of each deck
     def game_step(self):
+        # Check if decks are already empty
         if len(self.player2.deck) == 0:
             return {
                 "finished": True,
@@ -89,13 +91,13 @@ class Game:
             }
 
         p1_card = self.player1.deck.pop(0)
-        # print(self.player1.name, p1_card)
         p2_card = self.player2.deck.pop(0)
-        # print(self.player2.name, p2_card)
         self.winnings.extend([p1_card, p2_card])
         random.shuffle(self.winnings)
 
+        # If there's a tie
         if p1_card == p2_card:
+            # If that last round was the last card, handle winner now
             if len(self.player1.deck) == 0 or len(self.player2.deck) == 0:
                 del self.winnings
 
@@ -115,6 +117,7 @@ class Game:
                         "player1_score": 0,
                         "player2_score": 1,
                     }
+            # Otherwise, add cards to winnings pile and return
             self.winnings.append(self.player1.deck.pop(0))
             self.winnings.append(self.player2.deck.pop(0))
             return {
@@ -155,18 +158,12 @@ class Game:
         return None
 
     # Returns dict of player name and scores
+    # Loops through game_step until one player is out
     def play_game(self):
-        # print(len(self.player1.deck))
-        # print(len(self.player2.deck))
-        # print(len(self.winnings))
+
         while len(self.player1.deck) > 0 and len(self.player2.deck) > 0:
             self.game_step()
-            # print(
-            #    self.player1.name + ":",
-            #    str(len(self.player1.deck)),
-            #    "\n" + self.player2.name + ":",
-            #    str(len(self.player2.deck)),
-            # )
+
         del self.winnings
         if len(self.player2.deck) == 0:
             return {
@@ -201,16 +198,10 @@ class Game:
 
     def from_json(j_str):
         j = json.loads(j_str)
-        # print(type(j))
         p1_name = j["player1"]
-        # print(p1_name)
         p1_deck = [Card(c["suit"], c["rank"]) for c in j["player1_deck"]]
-        # print(p1_deck)
         p2_name = j["player2"]
-        # print(p2_name)
         p2_deck = [Card(c["suit"], c["rank"]) for c in j["player2_deck"]]
-        # print(p2_deck)
         winnings = j["winnings"]
-        # print(winnings)
 
         return Game(p1_name, p2_name, p1_deck, p2_deck, winnings=winnings)

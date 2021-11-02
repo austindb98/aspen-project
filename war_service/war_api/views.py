@@ -30,7 +30,7 @@ def create_player(request):
 
 def get_all_wins(request):
     players = Player.objects.all()
-    win_dict = {}
+    win_dict = {}  # key = name, value = # wins
     for p in players:
         win_dict[p.name] = p.wins
     return JsonResponse(win_dict, status=200)
@@ -38,9 +38,8 @@ def get_all_wins(request):
 
 def get_wins(request):
     data = json.loads(request.body.decode("utf-8"))
-    # print(data)
     p = data.get("name")
-    # print(p)
+
     try:
         wins = Player.objects.get(name=p).wins
         return JsonResponse({"wins": wins}, status=200)
@@ -80,16 +79,17 @@ def start_game(request):
     p2 = data.get("player2")
     game_state = war.Game(p1, p2).to_json()
     game_entry = {
-        "player1": Player.objects.get_or_create(name=p1)[0],
+        "player1": Player.objects.get_or_create(name=p1)[
+            0
+        ],  # Allows for creaing players via new game
         "player2": Player.objects.get_or_create(name=p2)[0],
         "game_state": game_state,
     }
-    # print(game_entry)
 
     db_game = None
     try:
         db_game = Game.objects.create(**game_entry)
-    except IntegrityError as e:
+    except IntegrityError as e:  # Game table holds only one game per unique (p1, p2)
         return JsonResponse(
             {"message": f"Game between P1: {p1} and P2: {p2} already exists"},
             status=400,
@@ -118,9 +118,12 @@ def play_game(request):
             {"exception_type": str(type(e)), "message": f"DB query failed, {e}"},
             status=400,
         )
+
+    # Create Game object from stored json
     g = war.Game.from_json(game_json)
     game_response = g.play_game()
 
+    # Increment wins/games played for both players
     p1, p2 = game_response["player1"], game_response["player2"]
 
     db_p1 = None
@@ -157,6 +160,7 @@ def play_game(request):
     db_p2.wins += game_response["player2_score"]
     db_p2.save()
 
+    # Since game is finished, we don't need it anymore
     Game.objects.get(id=game_id).delete()
 
     return JsonResponse(game_response)
@@ -182,9 +186,10 @@ def take_turn(request):
     game_json = db_game.game_state
     g = war.Game.from_json(game_json)
     game_response = g.game_step()
-    db_game.game_state = g.to_json()
+    db_game.game_state = g.to_json()  # Save the new state back to the db
     db_game.save()
 
+    # If game is complete, handle in the same way
     if game_response["finished"] == True:
         p1, p2 = game_response["player1"], game_response["player2"]
 
