@@ -14,13 +14,12 @@ This project is a web service containing 7 endpoints
 Both ```taketurn``` and ```playgame``` automatically update the wins and games played of both participants upon game completion.
 
 ## Requirements
-- Python 3
-- django
+- Docker
 
 ## Running the project
 - Navigate to the ```war_service``` directory
 
-- ```python manage.py runserver```
+- ```./run.sh```
 
 ## Running provided tests
 **Caution:** ```tests.sh``` flushes the database.

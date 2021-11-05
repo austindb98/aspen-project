@@ -1,8 +1,7 @@
 #!/bin/bash
 
-echo 'yes' | python manage.py flush
-python manage.py runserver &
-pid=$!
-sleep 3
+./run.sh
+docker container exec -it war_service python manage.py flush --noinput
+sleep 2
 python tests.py
-kill $pid
+docker logs war_service

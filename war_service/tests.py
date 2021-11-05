@@ -1,6 +1,7 @@
 import json
 import requests
 import unittest
+import time
 
 player1 = json.dumps({"name": "Anna"})
 player2 = json.dumps({"name": "Bill"})
@@ -136,19 +137,33 @@ class TestWarAPI(unittest.TestCase):
 
     def test_api(self):
         self.Test_create_player()
+        time.sleep(0.1) 
         self.Test_duplicate_player()
+        time.sleep(0.1) 
         self.Test_get_wins_success()
+        time.sleep(0.1) 
         self.Test_get_wins_failure()
+        time.sleep(0.1) 
         self.Test_get_games_success()
+        time.sleep(0.1) 
         self.Test_get_games_failure()
+        time.sleep(0.1) 
         self.Test_create_game()
+        time.sleep(0.1) 
         self.Test_create_game_new_player()
+        time.sleep(0.1) 
         self.Test_create_duplicate_game()
+        time.sleep(0.1) 
         self.Test_take_turn()
+        time.sleep(0.1) 
         self.Test_play_game()
+        time.sleep(0.1) 
         self.Test_take_turn_fail()
+        time.sleep(0.1) 
         self.Test_play_game_fail()
+        time.sleep(0.1) 
         self.Test_get_games_success2()
+        
         self.Test_get_wins_success2()
 
 
